@@ -8,8 +8,8 @@ with just one call of the script.
 
 ## Requirements
 
-- (spotipy)[https://github.com/spotipy-dev/spotipy]
-- (tidalapi)[https://github.com/tamland/python-tidal]
+- [spotipy](https://github.com/spotipy-dev/spotipy)
+- [tidalapi](https://github.com/tamland/python-tidal)
 
 ## Usage
 
