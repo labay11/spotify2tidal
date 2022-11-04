@@ -1,0 +1,9 @@
+env
+.env
+.spotify_*.json
+.cache
+__pycache__
+.vscode
+
+playlists/
+logs/
