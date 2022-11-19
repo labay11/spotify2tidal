@@ -1,7 +1,7 @@
 import os
 import sys
 
-from spotify import Spotify
+from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
 from spotify_scanner import load_tracks_from_playlist, load_user_playlists
 
