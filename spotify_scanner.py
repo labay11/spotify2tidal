@@ -55,7 +55,8 @@ def load_tracks_from_playlist(sp, user, playlist_id):
                 'artist': s['track']["artists"][0]['name'],
                 'album': s['track']['album']['name']
             } for s in content['items']
-            if 'isrc' in s['track']["external_ids"]
+            # track information might be empty (#1)
+            if s['track'] is not None and 'isrc' in s['track']["external_ids"]
         ])
 
         if content['next'] is not None:
