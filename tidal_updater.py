@@ -44,9 +44,23 @@ _FILTERS = [
 
 
 def search_track(session, track, filter_album=True):
+    tidal_track = None
+    try:
+        res = session.get_tracks_by_isrc(track['isrc'])
+        for _filter in (_FILTERS_ALBUM if filter_album else _FILTERS):
+            try:
+                tidal_track = next(t for t in res['tracks'] if _filter(track, t))
+            except Exception:
+                pass
+            if tidal_track is not None:
+                break
+        if tidal_track is not None:
+            return tidal_track
+    except Exception:
+        pass
+
     query = __normalize(track)
     res = session.search(query, models=[tidalapi.Track])
-    tidal_track = None
 
     for _filter in (_FILTERS_ALBUM if filter_album else _FILTERS):
         try:
@@ -60,7 +74,7 @@ def search_track(session, track, filter_album=True):
     return tidal_track
 
 
-def manual_search(session, track, max_options=5):
+def manual_search(session, track, max_options=10):
     query = __normalize(track)
     res = session.search(query, models=[tidalapi.Track])
 
@@ -71,13 +85,18 @@ def manual_search(session, track, max_options=5):
 
     print('-' * 20)
     print(f'Which one is "{track["name"]} - {track["artist"]} ({track["album"]})"?')
+    print('0: Skip')
     print('\n'.join([
         f'{j + 1}: {t.name} - {t.artist.name} ({t.album.name})' for j, t in enumerate(res['tracks'][:options])
     ]))
-    number = input(f'Choose a number? [1-{options}]')
+    number = input(f'Choose a number? [0-{options}]')
 
     try:
-        return res['tracks'][int(number.strip()) - 1]
+        user_input = int(number.strip())
+        if user_input > 0:
+            return res['tracks'][int(number.strip()) - 1]
+        else:
+            return None
     except Exception:
         return None
 
@@ -121,7 +140,7 @@ def add_tracks_to_playlist(session, playlist, tracks, search_for_duplicates=True
     }
 
     print('Summary:', end=' ')
-    print(','.join([f'{k}: {len(v)}' for k, v in data.items()]))
+    print(', '.join([f'{k}: {len(v)}' for k, v in data.items()]))
 
     if len(not_found_tracks) > 0:
         y0n = input('Some tracks could not be found, do you want to try manually? [Y/n] ')
